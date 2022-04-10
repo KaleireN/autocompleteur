@@ -46,6 +46,25 @@ int find_next_word(char *prev, char *act,
             max = y;
     }
 
+    if(inter->start == inter->end)
+    {
+        size_t j = 0;
+        while(dic[max].word[j] != '\0' && dic[max].word[j] == act[j])
+        {
+            // no autocomplete
+            if(act[j] == '\0')
+            {
+                break;
+            }
+            j++;
+        }
+        // needs autocorrection
+        if(act[j] != '\0')
+        {
+            max = -1;
+        }
+    }
+
     free(inter);
     return max;
 }
@@ -83,7 +102,12 @@ void autocomplete(word *dic, size_t nb_words, int **matrix)
 
             next = find_next_word(prev, act, dic, nb_words, matrix);
             if(next == -1)
+            {
                 continue;
+                // TODO autocorrection here
+                // we need to find the correction
+                // and update next and lennext accordingly
+            }
 
             if(lennext >= len)
             {
