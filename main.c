@@ -6,22 +6,23 @@
 #include <err.h>
 #include <string.h>
 
-int main()
+//test levenshtein
+/*int main()
 {
     char *str2 = "kitten";
     char *str1 = "sitting";
     printf("levenshtein(%s,%s) = %lu\n",str1,str2,levenshtein(str1,str2));
     str2 = "saturday";
-    str1 = "sunday";
+    str1 = "jeudi";
     printf("levenshtein(%s,%s) = %lu\n",str1,str2,levenshtein(str1,str2));
     str2 = "chiens";
     str1 = "niche";
     printf("levenshtein(%s,%s) = %lu\n",str1,str2,levenshtein(str1,str2));
     return 0;
-}
+}*/
 
-//word *dictionary;
-/*
+word *dictionary;
+
 int main(int argc, char **argv)
 {
     if(argc < 2)
@@ -48,4 +49,4 @@ int main(int argc, char **argv)
     free(matrix);
 
     return 0;
-}*/
+}
