@@ -8,14 +8,14 @@
 
 int main()
 {
-    char *str1 = "kitten";
-    char *str2 = "sitting";
-    printf("levenshtein(%s,%s) = %lu\n",str1,str2,levenshtein(str2,str1));
-    str1 = "saturday";
-    str2 = "sunday";
+    char *str2 = "kitten";
+    char *str1 = "sitting";
     printf("levenshtein(%s,%s) = %lu\n",str1,str2,levenshtein(str1,str2));
-    str1 = "chiens";
-    str2 = "niche";
+    str2 = "saturday";
+    str1 = "sunday";
+    printf("levenshtein(%s,%s) = %lu\n",str1,str2,levenshtein(str1,str2));
+    str2 = "chiens";
+    str1 = "niche";
     printf("levenshtein(%s,%s) = %lu\n",str1,str2,levenshtein(str1,str2));
     return 0;
 }

@@ -15,6 +15,21 @@ size_t str_len(char *s)
     return k;
 }
 
+void printmat(size_t *m,size_t r, size_t c)
+{
+    for(size_t i = 0; i < r; i++)
+    {
+        printf("[");
+        for(size_t j = 0; j < c; j++)
+        {
+            if(j!=0)
+                printf(", ");
+            printf("%lu",m[i * c + j]);
+        }
+        printf("]\n");
+    }
+}
+
 size_t levenshtein(char *str1, char *str2)
 {
     size_t len1 = str_len(str1);
@@ -33,9 +48,10 @@ size_t levenshtein(char *str1, char *str2)
         mat[j] = j;
     for(i = 1; i < len1; i++)
     {
+        //printf("[");
         for (j = 1; j < len2; j++)
         {
-            if (*(str1+i) == *(str2+j))
+            if (*(str1+i-1) == *(str2+j-1))
                 cost = 0;
             else
                 cost = 1;
@@ -45,8 +61,11 @@ size_t levenshtein(char *str1, char *str2)
             if(mat[(i-1) * len2 + j - 1] + cost < min)
                 min = mat[(i-1) * len2 + j - 1] + cost;
             mat[i * len2 + j] = min;
+            //printf("%lu, ",min);
         }
+        //printf("]\n");
     }
+    printmat(mat,len1,len2);
     size_t res = mat[(len1-1) * len2 + len2 - 1];
     free(mat);
     return res;    
