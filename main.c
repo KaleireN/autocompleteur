@@ -1,12 +1,27 @@
 #include "dictionary.h"
 #include "autocomplete.h"
+#include "correction.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <err.h>
 #include <string.h>
 
-word *dictionary;
+int main()
+{
+    char *str1 = "kitten";
+    char *str2 = "sitting";
+    printf("levenshtein(%s,%s) = %lu\n",str1,str2,levenshtein(str2,str1));
+    str1 = "saturday";
+    str2 = "sunday";
+    printf("levenshtein(%s,%s) = %lu\n",str1,str2,levenshtein(str1,str2));
+    str1 = "chiens";
+    str2 = "niche";
+    printf("levenshtein(%s,%s) = %lu\n",str1,str2,levenshtein(str1,str2));
+    return 0;
+}
 
+//word *dictionary;
+/*
 int main(int argc, char **argv)
 {
     if(argc < 2)
@@ -33,4 +48,4 @@ int main(int argc, char **argv)
     free(matrix);
 
     return 0;
-}
+}*/

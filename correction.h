@@ -5,6 +5,6 @@
 #ifndef CORRECTION_H
 #define CORRECTION_H
 
-size_t levenstein(char *str1, char *str2);
+size_t levenshtein(char *str1, char *str2);
 
 #endif

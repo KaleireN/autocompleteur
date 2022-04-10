@@ -19,9 +19,10 @@ size_t levenshtein(char *str1, char *str2)
 {
     size_t len1 = str_len(str1);
     size_t len2 = str_len(str2);
-    size_t *mat = malloc(len1 * len2);
+    size_t *mat = malloc(len1 * len2 * sizeof(size_t));
     if (mat == NULL)
         errx(1,"can't allocate matrix");
+    memset(mat,0,len1*len2*sizeof(size_t));
     size_t cost = 0;
     size_t i = 0;
     size_t j = 0;
@@ -43,7 +44,10 @@ size_t levenshtein(char *str1, char *str2)
                 min = mat[i * len2 + j - 1] + 1;
             if(mat[(i-1) * len2 + j - 1] + cost < min)
                 min = mat[(i-1) * len2 + j - 1] + cost;
+            mat[i * len2 + j] = min;
         }
     }
-    return mat[len1 * len2 - 1];    
+    size_t res = mat[(len1-1) * len2 + len2 - 1];
+    free(mat);
+    return res;    
 }
