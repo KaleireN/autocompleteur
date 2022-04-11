@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -fsanitize=address
+CFLAGS = -Wall -Wextra -fsanitize=address -o3
 LDFLAGS = -fsanitize=address
 SCR = main.c dictionary.c autocomplete.c correction.c
 OBJ = $(SCR:.c=.o)
