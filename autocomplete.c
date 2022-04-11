@@ -1,5 +1,6 @@
 #include "autocomplete.h"
 #include "dictionary.h"
+#include "correction.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <err.h>
@@ -103,10 +104,13 @@ void autocomplete(word *dic, size_t nb_words, int **matrix)
             next = find_next_word(prev, act, dic, nb_words, matrix);
             if(next == -1)
             {
-                continue;
                 // TODO autocorrection here
                 // we need to find the correction
                 // and update next and lennext accordingly
+                next = find_correction(matrix, dic, nb_words, act, prev);
+                if(next == -1){
+                    continue;
+                }
             }
 
             if(lennext >= len)
@@ -151,7 +155,18 @@ void autocomplete(word *dic, size_t nb_words, int **matrix)
         }
         else
         {
-            if(act[0] != '\0')
+            if(next == -1)
+            {
+                for(size_t i = 0; i < len; i++)
+                {
+                    printf("\b");
+                }
+                printf("%s ",act);
+                reset_str(act);
+                len = 0;
+                lennext = 1;
+            }
+            else if(act[0] != '\0')
             {
                 if(prev[0] != '\0')
                 {

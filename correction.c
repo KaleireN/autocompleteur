@@ -1,8 +1,45 @@
 #include "correction.h"
+#include "dictionary.h"
 #include <err.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+int find_correction(int** mat,word* dic, size_t nb_words, char* word, char* prev)
+{
+    // todo add proba by most used word in language and opti by prechecking len
+    int res = -1;
+    double pres = -1;
+    int i_prev = find_word(dic, prev, nb_words);
+    for(size_t i = 0; i < nb_words; i++)
+    {
+        if(levenshtein(word, dic[i].word) <= 2)
+        {
+            if(res == -1)
+            {
+                res = i;
+                if(mat[i][nb_words] != 0){
+                    pres = (double)mat[i_prev][i]/mat[i_prev][nb_words];
+                }
+                else{
+                    pres = 0;
+                }
+            }
+            else
+            {
+                if(mat[i][nb_words] != 0)
+                {
+                    if(pres < (double)mat[i_prev][i]/mat[i_prev][nb_words])
+                    {
+                        res = i;
+                        pres = (double)mat[i_prev][i]/mat[i_prev][nb_words];
+                    }
+                }
+            }
+        }
+    }
+    return res;
+}
 
 size_t str_len(char *s)
 {
