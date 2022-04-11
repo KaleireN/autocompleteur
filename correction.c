@@ -11,8 +11,11 @@ int find_correction(int** mat,word* dic, size_t nb_words, char* word, char* prev
     int res = -1;
     double pres = -1;
     int i_prev = find_word(dic, prev, nb_words);
+    int len_word = strlen(word);
     for(size_t i = 0; i < nb_words; i++)
     {
+        if(abs((int)strlen(dic[i].word) - len_word) > 2)
+            continue;
         if(levenshtein(word, dic[i].word) <= 2)
         {
             if(res == -1)
