@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int find_correction(int** mat,word* dic, size_t nb_words, char* word, char* prev)
+int find_correction(int** mat, word* dic, size_t nb_words, char* word, char* prev)
 {
-    // todo add proba by most used word in language and opti by prechecking len
+    // todo add proba by most used word in language
     int res = -1;
     double pres = -1;
     int i_prev = find_word(dic, prev, nb_words);
@@ -21,12 +21,10 @@ int find_correction(int** mat,word* dic, size_t nb_words, char* word, char* prev
             if(res == -1)
             {
                 res = i;
-                if(mat[i][nb_words] != 0){
+                if(mat[i][nb_words] != 0)
                     pres = (double)mat[i_prev][i]/mat[i_prev][nb_words];
-                }
-                else{
+                else
                     pres = 0;
-                }
             }
             else
             {
