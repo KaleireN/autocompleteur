@@ -21,14 +21,14 @@ int find_correction(int** mat, word* dic, size_t nb_words, char* word, char* pre
             if(res == -1)
             {
                 res = i;
-                if(mat[i][nb_words] != 0)
+                if(mat[i_prev][nb_words] != 0)
                     pres = (double)mat[i_prev][i]/mat[i_prev][nb_words];
                 else
                     pres = 0;
             }
             else
             {
-                if(mat[i][nb_words] != 0)
+                if(mat[i_prev][nb_words] != 0)
                 {
                     if(pres < (double)mat[i_prev][i]/mat[i_prev][nb_words])
                     {
