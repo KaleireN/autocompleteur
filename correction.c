@@ -42,17 +42,6 @@ int find_correction(int** mat, word* dic, size_t nb_words, char* word, char* pre
     return res;
 }
 
-size_t str_len(char *s)
-{
-    size_t k = 0;
-    while (*s != '\0')
-    {
-        k++;
-        s++;
-    }
-    return k;
-}
-
 void printmat(size_t *m,size_t r, size_t c)
 {
     for(size_t i = 0; i < r; i++)
@@ -70,8 +59,8 @@ void printmat(size_t *m,size_t r, size_t c)
 
 size_t levenshtein(char *str1, char *str2)
 {
-    size_t len1 = str_len(str1)+1;
-    size_t len2 = str_len(str2)+1;
+    size_t len1 = strlen(str1)+1;
+    size_t len2 = strlen(str2)+1;
     size_t *mat = malloc(len1 * len2 * sizeof(size_t));
     if (mat == NULL)
         errx(1,"can't allocate matrix");
