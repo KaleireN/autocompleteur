@@ -222,4 +222,71 @@ void autocomplete(word *dic, size_t nb_words, int **matrix)
     printf("\nend\n");
 }
 
+void strautocomplete(word *dic, size_t nb_words, int **matrix, char *prev, char *act, char *row,int rsize, int pos, char c)
+{
+    size_t len = strlen(act);
+    size_t lennext = 0;
+    int next;
+    
+    if(is_part_of_word(c))
+    {
+        act[len] = c;
+        len++;
+        if(prev[0] == '\0')
+            continue;
 
+        next = find_next_word(prev, act, dic, nb_words, matrix);
+        if(next == -1)
+        {
+            next = find_correction(matrix, dic, nb_words, act, prev);
+            if(next == -1)
+            {
+                continue;
+            }
+        }
+        lennext = strlen(dic[next].word);
+        if (lennext > len)
+        {
+            row = realloc(row,rsize+lennext-len+1);
+            rsize += lennext-len+1; 
+        }
+        for(size_t i = 0; i < lennext; i++)
+        {
+            row[pos-len+i] = dic[next].word[i];
+        }
+        row[pos-len+lennext+1] = '\0';
+    }
+    else
+    {
+        if(find_word(dic, act, nb_words) != -1)
+        {
+            strcpy(prev, act);
+        }
+        else
+        {
+            if (prev[0] != '\0')
+            {
+                next = find_next_word(prev, act, dic, nb_words, matrix);
+                if (next == -1)
+                    next = find_correction(matrix, dic, nb_words, act, prev);
+                if (next != -1)
+                {
+                    strcpy(prev,dic[next].word);
+                    lennext = strlen(dic[next].word);
+                    if (lennext > len)
+                    {
+                        row = realloc(row,rsize+lennext-len+1);
+                        rsize += lennext-len+1; 
+                    }
+                    for(size_t i = 0; i < lennext; i++)
+                    {
+                        row[pos-len+i] = dic[next].word[i]
+                    }
+                    row[pos-len+lennext+1] = '\0';
+                }
+            }
+        }
+        row[pos] = c;
+        reset_str(act);
+    }
+}

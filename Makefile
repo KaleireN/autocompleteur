@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -fsanitize=address -o3
 LDFLAGS = -fsanitize=address
-SCR = main.c dictionary.c autocomplete.c correction.c
+SCR = main.c dictionary.c autocomplete.c correction.c editor.c
 OBJ = $(SCR:.c=.o)
 
 all: main
@@ -9,7 +9,9 @@ all: main
 test: test.o
 test.o: test.c
 
+editor: editor.o
 main: ${OBJ}
+editor.o: editor.c
 main.o: main.c dictionary.h autocomplete.h correction.h
 dictionary.o: dictionary.c dictionary.h
 autocomplete.o: autocomplete.c autocomplete.h dictionary.h
