@@ -232,29 +232,26 @@ void strautocomplete(word *dic, size_t nb_words, int **matrix, char *prev, char 
     {
         act[len] = c;
         len++;
-        if(prev[0] == '\0')
-            continue;
-
-        next = find_next_word(prev, act, dic, nb_words, matrix);
-        if(next == -1)
+        if(prev[0] != '\0')
         {
-            next = find_correction(matrix, dic, nb_words, act, prev);
+            next = find_next_word(prev, act, dic, nb_words, matrix);
             if(next == -1)
+                next = find_correction(matrix, dic, nb_words, act, prev);
+            if(next != -1)
             {
-                continue;
+                lennext = strlen(dic[next].word);
+                if (lennext > len)
+                {
+                    row = realloc(row,rsize+lennext-len+1);
+                    rsize += lennext-len+1; 
+                }
+                for(size_t i = 0; i < lennext; i++)
+                {
+                    row[pos-len+i] = dic[next].word[i];
+                }
+                row[pos-len+lennext+1] = '\0';
             }
         }
-        lennext = strlen(dic[next].word);
-        if (lennext > len)
-        {
-            row = realloc(row,rsize+lennext-len+1);
-            rsize += lennext-len+1; 
-        }
-        for(size_t i = 0; i < lennext; i++)
-        {
-            row[pos-len+i] = dic[next].word[i];
-        }
-        row[pos-len+lennext+1] = '\0';
     }
     else
     {
@@ -280,7 +277,7 @@ void strautocomplete(word *dic, size_t nb_words, int **matrix, char *prev, char 
                     }
                     for(size_t i = 0; i < lennext; i++)
                     {
-                        row[pos-len+i] = dic[next].word[i]
+                        row[pos-len+i] = dic[next].word[i];
                     }
                     row[pos-len+lennext+1] = '\0';
                 }

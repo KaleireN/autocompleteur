@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <errno.h>
-#include <err.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
@@ -516,10 +515,7 @@ void editorSelectSyntaxHighlight(char *filename) {
 }
 
 /* ======================= Editor rows implementation ======================= */
-char prev[50];
-char act[50];
-memset(prev, '\0', 50);
-memset(act, 0, 50);
+
 /* Update the rendered version and the syntax highlight of a row. */
 void editorUpdateRow(erow *row) {
     unsigned int tabs = 0, nonprint = 0;
@@ -534,7 +530,7 @@ void editorUpdateRow(erow *row) {
     unsigned long long allocsize =
         (unsigned long long) row->size + tabs*8 + nonprint*9 + 1;
     if (allocsize > UINT32_MAX) {
-        printf("Some line of the edited file is too long for kilo\n");
+        printf("Some line of the edited file is too long for the editor\n");
         exit(1);
     }
 
@@ -626,7 +622,7 @@ char *editorRowsToString(int *buflen) {
 
 /* Insert a character at the specified position in a row, moving the remaining
  * chars on the right if needed. */
-void editorRowInsertChar(erow *row, int at, int c, word *dic, size_t nb_words, int **matrix) {
+void editorRowInsertChar(erow *row, int at, int c) {
     if (at > row->size) {
         /* Pad the string with spaces if the insert location is outside the
          * current length by more than a single character. */
@@ -643,7 +639,7 @@ void editorRowInsertChar(erow *row, int at, int c, word *dic, size_t nb_words, i
         memmove(row->chars+at+1,row->chars+at,row->size-at+1);
         row->size++;
     }
-    strautocomplete(dic, nb_words, matrix, prev, act, row->chars, ,row->size, at, c);
+    row->chars[at] = c;
     editorUpdateRow(row);
     E.dirty++;
 }
@@ -668,7 +664,7 @@ void editorRowDelChar(erow *row, int at) {
 }
 
 /* Insert the specified char at the current prompt position. */
-void editorInsertChar(int c, word *dic, size_t nb_words, int **matrix) {
+void editorInsertChar(int c) {
     int filerow = E.rowoff+E.cy;
     int filecol = E.coloff+E.cx;
     erow *row = (filerow >= E.numrows) ? NULL : &E.row[filerow];
@@ -680,7 +676,7 @@ void editorInsertChar(int c, word *dic, size_t nb_words, int **matrix) {
             editorInsertRow(E.numrows,"",0);
     }
     row = &E.row[filerow];
-    editorRowInsertChar(row,filecol,c, dic, nb_words, matrix);
+    editorRowInsertChar(row,filecol,c);
     if (E.cx == E.screencols-1)
         E.coloff++;
     else
@@ -862,7 +858,7 @@ void editorRefreshScreen(void) {
             if (E.numrows == 0 && y == E.screenrows/3) {
                 char welcome[80];
                 int welcomelen = snprintf(welcome,sizeof(welcome),
-                    "Text editor\r\n");
+                    "Text editor");
                 int padding = (E.screencols-welcomelen)/2;
                 if (padding) {
                     abAppend(&ab,"~",1);
@@ -1101,7 +1097,6 @@ void editorMoveCursor(int key) {
         } else {
             E.cx -= 1;
         }
-        memset(act, 0, 50);
         break;
     case ARROW_RIGHT:
         if (row && filecol < row->size) {
@@ -1119,7 +1114,6 @@ void editorMoveCursor(int key) {
                 E.cy += 1;
             }
         }
-        memset(act, 0, 50);
         break;
     case ARROW_UP:
         if (E.cy == 0) {
@@ -1127,7 +1121,6 @@ void editorMoveCursor(int key) {
         } else {
             E.cy -= 1;
         }
-        memset(act, 0, 50);
         break;
     case ARROW_DOWN:
         if (filerow < E.numrows) {
@@ -1137,7 +1130,6 @@ void editorMoveCursor(int key) {
                 E.cy += 1;
             }
         }
-        memset(act, 0, 50);
         break;
     }
     /* Fix cx if the current line has not enough chars. */
@@ -1157,7 +1149,7 @@ void editorMoveCursor(int key) {
 /* Process events arriving from the standard input, which is, the user
  * is typing stuff on the terminal. */
 #define KILO_QUIT_TIMES 3
-void editorProcessKeypress(int fd, word *dic, size_t nb_words, int **matrix) {
+void editorProcessKeypress(int fd) {
     /* When the file is modified, requires Ctrl-q to be pressed N times
      * before actually quitting. */
     static int quit_times = KILO_QUIT_TIMES;
@@ -1205,7 +1197,6 @@ void editorProcessKeypress(int fd, word *dic, size_t nb_words, int **matrix) {
             editorMoveCursor(c == PAGE_UP ? ARROW_UP:
                                             ARROW_DOWN);
         }
-        memset(act, 0, 50);
         break;
 
     case ARROW_UP:
@@ -1221,7 +1212,7 @@ void editorProcessKeypress(int fd, word *dic, size_t nb_words, int **matrix) {
         /* Nothing to do for ESC in this mode. */
         break;
     default:
-        editorInsertChar(c, dic, nb_words, matrix);
+        editorInsertChar(c);
         break;
     }
 
@@ -1262,8 +1253,11 @@ void initEditor(void) {
     signal(SIGWINCH, handleSigWinCh);
 }
 
-int start(word *dic, size_t nb_words ,int **matrix) 
-{
+int main(int argc, char **argv) {
+    if (argc != 2) {
+        fprintf(stderr,"Usage: ./editor <filename>\n");
+        exit(1);
+    }
 
     initEditor();
     editorSelectSyntaxHighlight(argv[1]);
@@ -1273,7 +1267,7 @@ int start(word *dic, size_t nb_words ,int **matrix)
         "HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
     while(1) {
         editorRefreshScreen();
-        editorProcessKeypress(STDIN_FILENO,dic,nb_words,matrix);
+        editorProcessKeypress(STDIN_FILENO);
     }
     return 0;
 }
